@@ -5,7 +5,7 @@ frontend/rovea/node_modules/
 
 # Env files
 .env
-.env.*
+
 backend/.env
 backend/.env.*
 frontend/rovea/.env
