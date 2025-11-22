@@ -63,7 +63,7 @@ export default function Navbar() {
       <div className="container">
         {/* BRAND */}
         <Link className="navbar-brand fw-bold text-primary" to="/">
-          Rovexa
+          Web studio
         </Link>
 
         {/* MOBILE BUTTON */}
