@@ -1,0 +1,104 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+.hover-link:hover {
+  color: #0d6efd !important;
+}
+  /* Hero animations */
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.8s ease forwards;
+}
+
+.animate-slide-right {
+  animation: slideRight 0.8s ease forwards;
+}
+.nav-link.active {
+  border-bottom: 2px solid #0d6efd;
+}
+/* Portfolio card fade-up animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.portfolio-card {
+  animation-name: fadeUp;
+  animation-duration: 420ms;
+  animation-fill-mode: both;
+  animation-timing-function: ease-out;
+}
+
+/* image zoom on card hover */
+.portfolio-card .card:hover .card-img-top {
+  transform: scale(1.06);
+}
+
+/* small spacing for bootstrap gap fallback */
+.gap-2 { gap: .5rem; }
+/* Fade-up animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation */
+.service-card {
+  animation: fadeUp 0.5s ease forwards;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Hover shadow */
+.service-card:hover {
+  box-shadow: 0 0.75rem 1.25rem rgba(0, 0, 0, 0.15) !important;
+}
+.fade-up {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
