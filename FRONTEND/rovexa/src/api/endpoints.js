@@ -1,5 +1,5 @@
 // src/api/endpoints.js
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000/api';
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:4000/api';
 
 // --- function implementations ---
 export async function healthCheck() {

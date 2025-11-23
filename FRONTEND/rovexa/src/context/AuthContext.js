@@ -15,16 +15,8 @@ export function AuthProvider({ children }) {
       const accessToken = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
 
-      if (!accessToken) {
-        console.log("fetchMe: no accessToken, treating as logged out");
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-
-      // optional: if you also want refreshToken to exist
-      if (!refreshToken) {
-        console.log("fetchMe: no refreshToken, treating as logged out");
+      if (!accessToken || !refreshToken) {
+        console.log("fetchMe: missing token(s), treating as logged out");
         setUser(null);
         setLoading(false);
         return;

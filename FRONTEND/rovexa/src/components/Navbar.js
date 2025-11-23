@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
+import "./Navbar.css";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,13 +13,26 @@ export default function Navbar() {
 
   const { isAuthenticated, loading, logout } = useAuth();
 
+  // Auth-related routes where navbar should be completely hidden
+  const authHiddenPaths = [
+    "/login",
+    "/signup",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-otp",
+    "/oauth-success",
+    "/admin/login",
+  ];
+
+  const isAuthPage = authHiddenPaths.includes(location.pathname);
+
   // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  // while auth state is resolving, render nothing to avoid flash
-  if (loading) return null;
+  // During auth loading OR on auth pages -> no navbar at all
+  if (loading || isAuthPage) return null;
 
   // Links that should be visible only to authenticated users
   const authLinks = [
@@ -29,17 +43,22 @@ export default function Navbar() {
     { to: "/contact", label: "Contact" },
   ];
 
-  // Links for unauthenticated users
+  // NOTE: guestLinks won't actually show now, because:
+  // - when logged out we are always on an auth page (navbar hidden)
+  // - when logged in isAuthenticated==true
   const guestLinks = [
     { to: "/login", label: "Login" },
     { to: "/signup", label: "Signup" },
   ];
 
-  // Return true when the link should be considered active.
   const isActive = (path) => {
     const pathname = location.pathname || "/";
     if (path === "/") return pathname === "/";
-    return pathname === path || pathname.startsWith(path + "/") || pathname.startsWith(path);
+    return (
+      pathname === path ||
+      pathname.startsWith(path + "/") ||
+      pathname.startsWith(path)
+    );
   };
 
   const handleLogout = async () => {
@@ -48,7 +67,6 @@ export default function Navbar() {
         await logout();
       }
     } finally {
-      // ensure user lands on login page after logout
       navigate("/login", { replace: true });
       setIsOpen(false);
     }
@@ -56,43 +74,44 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`navbar navbar-expand-lg ${darkMode ? "navbar-dark bg-dark shadow-sm" : "navbar-light bg-white shadow-sm"}`}
-      style={{ zIndex: 1100 }}
+      className={`premium-navbar ${darkMode ? "dark-mode" : "light-mode"}`}
       aria-label="Main navigation"
     >
-      <div className="container">
+      <div className="premium-navbar-container">
         {/* BRAND */}
-        <Link className="navbar-brand fw-bold text-primary" to="/">
-          Web studio
+        <Link className="premium-brand" to="/">
+          <span className="brand-text">Web</span>
+          <span className="brand-dot">.</span>
+          <span className="brand-text">studio</span>
         </Link>
 
         {/* MOBILE BUTTON */}
         <button
-          className="navbar-toggler"
+          className={`premium-hamburger ${isOpen ? "is-open" : ""}`}
           type="button"
           aria-controls="main-navbar"
           aria-expanded={isOpen}
           aria-label="Toggle navigation"
           onClick={() => setIsOpen((v) => !v)}
         >
-          <span className="navbar-toggler-icon" />
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
         </button>
 
         {/* COLLAPSE MENU */}
-        <div id="main-navbar" className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-            {/* Render auth-only links when signed in */}
+        <div className={`premium-navbar-menu ${isOpen ? "is-open" : ""}`}>
+          <ul className="premium-nav-list">
+            {/* Authenticated links */}
             {isAuthenticated &&
               authLinks.map((link) => {
                 const active = isActive(link.to);
-                const linkClasses = [
-                  "nav-link",
-                  active ? "active text-primary fw-semibold" : darkMode ? "text-light" : "text-dark",
-                ].join(" ");
                 return (
-                  <li className="nav-item" key={link.to}>
+                  <li className="premium-nav-item" key={link.to}>
                     <Link
-                      className={linkClasses}
+                      className={`premium-nav-link ${
+                        active ? "is-active" : ""
+                      }`}
                       to={link.to}
                       onClick={() => setIsOpen(false)}
                     >
@@ -102,18 +121,16 @@ export default function Navbar() {
                 );
               })}
 
-            {/* Render guest links when not signed in */}
+            {/* Guest links - practically never rendered now, but kept for safety */}
             {!isAuthenticated &&
               guestLinks.map((link) => {
                 const active = isActive(link.to);
-                const linkClasses = [
-                  "nav-link",
-                  active ? "active text-primary fw-semibold" : darkMode ? "text-light" : "text-dark",
-                ].join(" ");
                 return (
-                  <li className="nav-item" key={link.to}>
+                  <li className="premium-nav-item" key={link.to}>
                     <Link
-                      className={linkClasses}
+                      className={`premium-nav-link ${
+                        active ? "is-active" : ""
+                      }`}
                       to={link.to}
                       onClick={() => setIsOpen(false)}
                     >
@@ -126,9 +143,11 @@ export default function Navbar() {
             {/* If authenticated, show dashboard and logout controls */}
             {isAuthenticated && (
               <>
-                <li className="nav-item">
+                <li className="premium-nav-item">
                   <Link
-                    className={isActive("/dashboard") ? "nav-link active text-primary fw-semibold" : (darkMode ? "nav-link text-light" : "nav-link text-dark")}
+                    className={`premium-nav-link ${
+                      isActive("/dashboard") ? "is-active" : ""
+                    }`}
                     to="/dashboard"
                     onClick={() => setIsOpen(false)}
                   >
@@ -136,10 +155,10 @@ export default function Navbar() {
                   </Link>
                 </li>
 
-                <li className="nav-item ms-2">
+                <li className="premium-nav-item premium-btn-item">
                   <button
                     onClick={handleLogout}
-                    className={`btn btn-sm ${darkMode ? "btn-outline-light" : "btn-outline-dark"}`}
+                    className="premium-btn premium-btn-outline"
                     type="button"
                   >
                     Logout
@@ -147,21 +166,6 @@ export default function Navbar() {
                 </li>
               </>
             )}
-
-            {/* DARK / LIGHT TOGGLE */}
-            <li className="nav-item ms-lg-3">
-              <button
-                onClick={() => {
-                  toggleDarkMode();
-                  setIsOpen(false);
-                }}
-                className={`btn btn-sm ${darkMode ? "btn-outline-light" : "btn-outline-dark"}`}
-                aria-pressed={darkMode}
-                type="button"
-              >
-                {darkMode ? "Light Mode" : "Dark Mode"}
-              </button>
-            </li>
           </ul>
         </div>
       </div>

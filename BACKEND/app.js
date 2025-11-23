@@ -14,9 +14,9 @@ const session = require('express-session');              // IMPORTANT
 const passport = require('./src/config/passport');       // uses src/config/passport.js
 
 const authRoutes = require('./routes/auth'); // USES backend/routes/auth.js
-
+const uploadRoutes = require('./routes/upload');
 const app = express();
-
+const contactRoutes = require("./routes/contactRoutes");
 // Basic logging in dev
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
@@ -45,6 +45,9 @@ app.use(
     },
   })
 );
+
+app.use('/api/upload', uploadRoutes);
+app.use('/uploads', express.static('uploads'));
 
 // Passport session support (for Google OAuth)
 if (passport) {
@@ -136,4 +139,8 @@ mongoose
     process.exit(1);
   });
 
+
+  //contact handler
+
+  app.use("/api/contact", contactRoutes);
 module.exports = app;
